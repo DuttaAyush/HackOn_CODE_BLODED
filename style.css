@@ -1,0 +1,98 @@
+
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .invoice-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .invoice-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .input-group input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 100%;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+            font-weight: 500;
+        }
+
+        .button-group {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .add-btn { background: #28a745; color: white; }
+        .delete-btn { background: #dc3545; color: white; }
+        .download-btn { background: #007bff; color: white; }
+        .print-btn { background: #17a2b8; color: white; }
+        .email-btn { background: #ff9800; color: white; }
+        
+        .add-btn:hover { background: #218838; }
+        .delete-btn:hover { background: #c82333; }
+        .download-btn:hover { background: #0056b3; }
+        .print-btn:hover { background: #138496; }
+        .email-btn:hover { background: #e68900; }
+    
