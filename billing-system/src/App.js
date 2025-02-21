@@ -7,7 +7,10 @@ const Card = ({ children }) => (
 
 const CardContent = ({ children }) => <div>{children}</div>;
 
-
+const dummyInvoices = [
+  { clientName: "John Doe", amount: 5000, date: "2025-02-21" },
+  { clientName: "Jane Smith", amount: 7500, date: "2025-02-20" },
+];
 function App() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -20,7 +23,7 @@ function App() {
         </Card>
         <Card>
           <CardContent>
-            <InvoiceList />
+          <InvoiceList invoices={dummyInvoices} />
           </CardContent>
         </Card>
       </div>
