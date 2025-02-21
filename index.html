@@ -80,13 +80,16 @@
       border-radius: 5px;
       color: #856404;
     }
+    .navbar-brand {
+      margin: 0 auto; /* Center the navbar brand */
+    }
   </style>
 </head>
 <body>
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#" ;">Billing System</a>
+      <a class="navbar-brand mx-auto" href="#">Billing System</a> <!-- Centered header -->
     </div>
   </nav>
 
@@ -347,16 +350,16 @@
       // Save the PDF
       doc.save('invoice.pdf');
     }
+
+    // Initialize
+    fetchCustomers();
+    fetchItems();
     function mailsent(){
         var mail = document.getElementById("customerEmail").value;
         alert('Invoice sent successfully at'+mail+'!');
         downloadInvoiceAsPDF()
 
     }
-
-    // Initialize
-    fetchCustomers();
-    fetchItems();
   </script>
 </body>
 </html>
