@@ -1,453 +1,381 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Automated Billing System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
-    <style>
-        /* Global Styles */
-        body {
-          font-family: 'Poppins', sans-serif;
-          background: #f8f9fa;
-          margin: 0;
-          padding: 20px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 100vh;
-        }
-
-        .invoice-container {
-          background: white;
-          padding: 30px;
-          border-radius: 12px;
-          width: 90%;
-          max-width: 1000px;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-          text-align: center; /* Center text inside the container */
-        }
-
-        .invoice-header {
-          display: fle;
-          flex-direction: column;
-          align-items: center; /* Center align items horizontally */
-          margin-bottom: 30px;
-        }
-
-        .invoice-title {
-          font-size: 28px;
-          font-weight: 600;
-          color: #333;
-          margin-bottom: 30px;
-        }
-
-        .input-group {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-bottom: 15px;
-    width: 40%;
-    margin: 0 auto;
-}
-
-.input-group label {
-    margin-right: 10px;
-    width: 100px;
-}
-
-.input-group input {
-    width: 200px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.error-message {
-    color: red;
-    font-size: 12px;
-    margin-top: 5px;
-    display: none;
-}
-
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-bottom: 30px;
-        }
-
-        th, td {
-          border: 1px solid #ddd;
-          padding: 12px;
-          text-align: center; /* Center align table content */
-        }
-
-        th {
-          background: #007bff;
-          color: white;
-          font-weight: 500;
-        }
-
-        tr:hover {
-          background: #f1f1f1;
-        }
-
-        input[type="text"], input[type="number"] {
-          width: 90%;
-          padding: 8px;
-          border: 1px solid #ddd;
-          border-radius: 6px;
-          font-size: 14px;
-          text-align: center; /* Center align input text */
-          transition: border-color 0.3s ease;
-        }
-
-        input[type="text"]:focus, input[type="number"]:focus {
-          border-color: #007bff;
-          outline: none;
-        }
-
-        .total-section {
-          text-align: center; /* Center align total section */
-          margin-top: 20px;
-          font-size: 18px;
-          font-weight: 500;
-        }
-
-        .total-section input {
-          width: 100px;
-          margin-left: 10px;
-          padding: 8px;
-          border: 1px solid #ddd;
-          border-radius: 6px;
-          font-size: 14px;
-          text-align: center;
-        }
-
-        .button-group {
-          margin-top: 30px;
-          text-align: center; /* Center align buttons */
-        }
-
-        button {
-          padding: 10px 20px;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 500;
-          margin-left: 10px;
-          transition: background 0.3s ease;
-        }
-
-        .add-btn {
-          background: #28a745;
-          color: white;
-        }
-
-        .add-btn:hover {
-          background: #218838;
-        }
-
-        .delete-btn {
-          background: #dc3545;
-          color: white;
-        }
-
-        .delete-btn:hover {
-          background: #c82333;
-        }
-
-        .download-btn {
-          background: #007bff;
-          color: white;
-        }
-
-        .download-btn:hover {
-          background: #0056b3;
-        }
-
-        .print-btn {
-          background: #17a2b8;
-          color: white;
-        }
-
-        .print-btn:hover {
-          background: #138496;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-          .invoice-header {
-              align-items: center;
-          }
-
-          .button-group {
-              text-align: center;
-          }
-
-          button {
-              width: 100%;
-              margin: 10px 0;
-          }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Automated Billing System</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- jsPDF Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Custom CSS -->
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Arial', sans-serif;
+    }
+    .navbar {
+      background-color: #0d6efd;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .navbar-brand, .nav-link {
+      color: white !important;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      background-color: white;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .form-control:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
+    }
+    .btn-primary {
+      background-color: #0d6efd;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+    .btn-primary:hover {
+      background-color: #0b5ed7;
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+    .form-label {
+      font-weight: 500;
+      color: #333;
+    }
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    .invoice-item-row {
+      margin-bottom: 15px;
+    }
+    #invoiceSummary {
+      margin-top: 20px;
+    }
+    #invoiceSummary table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    #invoiceSummary th, #invoiceSummary td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    #invoiceSummary th {
+      background-color: #f8f9fa;
+    }
+  </style>
 </head>
 <body>
-    <div class="invoice-container">
-        <div class="invoice-header">
-            <div class="invoice-title">Invoice Generator</div>
-            <div>
-              <div class="input-group">
-                <label for="name">Name:</label>
-                <input type="text" id="name" placeholder="Enter Name">
-                <div id="nameError" class="error-message">Name is required.</div>
-            </div>
-            
-            <div class="input-group">
-                <label for="mobile">Mobile No:</label>
-                <input type="text" id="mobile" placeholder="Enter Mobile No">
-                <div id="mobileError" class="error-message">Invalid mobile number (10 digits required).</div>
-            </div>
-
-                <div class="input-group">
-                    <label for="email">Email: </label>
-                    <input type="email" id="email" placeholder="Enter Email">
-                    <div id="emailError" class="error-message">Invalid email address.</div>
-                </div>
-
-                <div class="input-group">
-                    <label for="invoiceDate">Invoice Date: </label>
-                    <input type="date" id="invoiceDate">
-                </div>
-
-                <div class="input-group">
-                    <label for="invoiceNumber">Invoice #: </label>
-                    <input type="text" id="invoiceNumber" readonly>
-                </div>
-            </div>
-        </div>
-        <table id="invoiceTable">
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Rows will be added dynamically -->
-            </tbody>
-        </table>
-        <div class="total-section">
-            <div>
-                <label for="tax">Tax (%): </label>
-                <input type="number" id="tax" value="0" min="0" oninput="updateTotal()">
-            </div>
-            <div>
-                <label for="discount">Discount ($): </label>
-                <input type="number" id="discount" value="0" min="0" oninput="updateTotal()">
-            </div>
-            <div>
-                Grand Total: $<span id="grandTotal">0</span>
-            </div>
-        </div>
-        <div class="button-group">
-            <button class="add-btn" onclick="addRow()"> Add Item</button>
-            <button class="download-btn" onclick="downloadInvoice()"> Download PDF</button>
-            <button class="print-btn" onclick="printInvoice()"> Print Invoice</button>
-        </div>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Billing System</a>
     </div>
+  </nav>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script>
-        // Initialize jsPDF
-        const { jsPDF } = window.jspdf;
+  <!-- Main Content -->
+  <div class="container mt-5">
+    <!-- Customers Section -->
+    <section id="customers" class="mb-5">
+      <h2 class="mb-4">Customers</h2>
+      <div class="card p-4">
+        <form id="customerForm">
+          <div class="mb-3">
+            <label for="customerName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="customerName" required>
+            <div id="customerNameError" class="error-message"></div>
+          </div>
+          <div class="mb-3">
+            <label for="customerEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" id="customerEmail" required>
+            <div id="customerEmailError" class="error-message"></div>
+          </div>
+          <div class="mb-3">
+            <label for="customerPhone" class="form-label">Phone</label>
+            <input type="text" class="form-control" id="customerPhone">
+          </div>
+          <button type="submit" class="btn btn-primary">Add Customer</button>
+        </form>
+      </div>
+    </section>
 
-        // Load saved data from local storage
-        document.addEventListener("DOMContentLoaded", () => {
-            loadFromLocalStorage();
-            generateInvoiceNumber();
+    <!-- Items Section -->
+    <section id="items" class="mb-5">
+      <h2 class="mb-4">Items</h2>
+      <div class="card p-4">
+        <form id="itemForm">
+          <div class="mb-3">
+            <label for="itemName" class="form-label">Item Name</label>
+            <input type="text" class="form-control" id="itemName" required>
+            <div id="itemNameError" class="error-message"></div>
+          </div>
+          <div class="mb-3">
+            <label for="itemPrice" class="form-label">Price</label>
+            <input type="number" step="0.01" class="form-control" id="itemPrice" required>
+            <div id="itemPriceError" class="error-message"></div>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Item</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Invoices Section -->
+    <section id="invoices" class="mb-5">
+      <h2 class="mb-4">Invoices</h2>
+      <div class="card p-4">
+        <form id="invoiceForm">
+          <div class="mb-3">
+            <label for="invoiceCustomer" class="form-label">Customer</label>
+            <select class="form-select" id="invoiceCustomer" required>
+              <option value="">Select Customer</option>
+            </select>
+            <div id="invoiceCustomerError" class="error-message"></div>
+          </div>
+          <div class="mb-3">
+            <label for="invoiceItems" class="form-label">Items</label>
+            <div id="invoiceItems">
+              <!-- Dynamically add items here -->
+            </div>
+            <button type="button" class="btn btn-secondary mt-2" onclick="addItemRow()">Add Item</button>
+          </div>
+          <div id="invoiceSummary">
+            <h4>Invoice Summary</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="invoiceSummaryBody">
+                <!-- Invoice items will be added here -->
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="3">Grand Total</th>
+                  <th id="grandTotal">$0.00</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <button type="submit" class="btn btn-primary mt-3">Generate Invoice</button>
+          <button type="button" class="btn btn-success mt-3" onclick="downloadInvoiceAsPDF()">Download PDF</button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script>
+    // Initialize jsPDF
+    const { jsPDF } = window.jspdf;
+
+    // Mock data for customers and items (replace with backend API calls)
+    let customers = [];
+    let items = [];
+
+    // Add item row dynamically
+    function addItemRow() {
+      const itemRow = `
+        <div class="invoice-item-row row mb-3">
+          <div class="col">
+            <select class="form-select item-select" required onchange="updateInvoiceSummary()">
+              <option value="">Select Item</option>
+              ${items.map(item => `<option value="${item.id}">${item.name} - $${item.price}</option>`).join('')}
+            </select>
+          </div>
+          <div class="col">
+            <input type="number" class="form-control item-quantity" placeholder="Quantity" required oninput="updateInvoiceSummary()">
+          </div>
+        </div>
+      `;
+      document.getElementById('invoiceItems').insertAdjacentHTML('beforeend', itemRow);
+    }
+
+    // Fetch customers and items (mock implementation)
+    function fetchCustomers() {
+      // Replace with actual API call
+      const customerSelect = document.getElementById('invoiceCustomer');
+      customerSelect.innerHTML = '<option value="">Select Customer</option>';
+      customers.forEach(customer => {
+        customerSelect.innerHTML += `<option value="${customer.id}">${customer.name}</option>`;
+      });
+    }
+
+    function fetchItems() {
+      // Replace with actual API call
+      const itemSelects = document.querySelectorAll('.item-select');
+      itemSelects.forEach(select => {
+        select.innerHTML = '<option value="">Select Item</option>';
+        items.forEach(item => {
+          select.innerHTML += `<option value="${item.id}">${item.name} - $${item.price}</option>`;
         });
+      });
+    }
 
-        function generateInvoiceNumber() {
-            const invoiceNumber = Math.floor(Math.random() * 1000000);
-            document.getElementById("invoiceNumber").value = `INV-${invoiceNumber}`;
+    // Update invoice summary
+    function updateInvoiceSummary() {
+      const invoiceSummaryBody = document.getElementById('invoiceSummaryBody');
+      invoiceSummaryBody.innerHTML = '';
+      let grandTotal = 0;
+
+      document.querySelectorAll('.invoice-item-row').forEach(row => {
+        const itemId = row.querySelector('.item-select').value;
+        const quantity = row.querySelector('.item-quantity').value;
+
+        if (itemId && quantity) {
+          const item = items.find(i => i.id == itemId);
+          const total = item.price * quantity;
+          grandTotal += total;
+
+          invoiceSummaryBody.innerHTML += `
+            <tr>
+              <td>${item.name}</td>
+              <td>${quantity}</td>
+              <td>$${item.price.toFixed(2)}</td>
+              <td>$${total.toFixed(2)}</td>
+            </tr>
+          `;
         }
+      });
 
-        function addRow() {
-            let table = document.querySelector("#invoiceTable tbody");
-            let newRow = document.createElement("tr");
-            newRow.innerHTML = `
-                <td><input type="text" placeholder="Item Name" oninput="saveToLocalStorage()"></td>
-                <td><input type="number" value="1" min="1" class="qty" oninput="updateTotal()"></td>
-                <td><input type="number" value="0" class="price" oninput="updateTotal()"></td>
-                <td class="total">0</td>
-                <td><button class="delete-btn" onclick="deleteRow(this)"> Delete</button></td>
-            `;
-            table.appendChild(newRow);
-            updateTotal(); // Update the total after adding a new row
-            saveToLocalStorage(); // Save the updated data to local storage
+      document.getElementById('grandTotal').innerText = `$${grandTotal.toFixed(2)}`;
+    }
+
+    // Handle customer form submission
+    document.getElementById('customerForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('customerName').value;
+      const email = document.getElementById('customerEmail').value;
+      const phone = document.getElementById('customerPhone').value;
+
+      if (!name || !email) {
+        alert('Name and Email are required.');
+        return;
+      }
+
+      // Add customer to mock data
+      const newCustomer = { id: customers.length + 1, name, email, phone };
+      customers.push(newCustomer);
+      alert('Customer added successfully!');
+      fetchCustomers(); // Refresh customer list
+    });
+
+    // Handle item form submission
+    document.getElementById('itemForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('itemName').value;
+      const price = parseFloat(document.getElementById('itemPrice').value);
+
+      if (!name || !price) {
+        alert('Item Name and Price are required.');
+        return;
+      }
+
+      // Add item to mock data
+      const newItem = { id: items.length + 1, name, price };
+      items.push(newItem);
+      alert('Item added successfully!');
+      fetchItems(); // Refresh item list
+    });
+
+    // Handle invoice form submission
+    document.getElementById('invoiceForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const customerId = document.getElementById('invoiceCustomer').value;
+      const selectedItems = [];
+      document.querySelectorAll('.invoice-item-row').forEach(row => {
+        const itemId = row.querySelector('.item-select').value;
+        const quantity = row.querySelector('.item-quantity').value;
+        if (itemId && quantity) {
+          selectedItems.push({ itemId, quantity });
         }
+      });
 
-        function deleteRow(btn) {
-            btn.parentElement.parentElement.remove();
-            updateTotal();
-            saveToLocalStorage();
-        }
+      if (!customerId || selectedItems.length === 0) {
+        alert('Please select a customer and at least one item.');
+        return;
+      }
 
-        function updateTotal() {
-            let grandTotal = 0;
-            document.querySelectorAll("#invoiceTable tbody tr").forEach(row => {
-                let qty = row.querySelector(".qty").value;
-                let price = row.querySelector(".price").value;
-                let total = qty * price;
-                row.querySelector(".total").innerText = total;
-                grandTotal += total;
-            });
+      // Generate invoice (mock implementation)
+      alert('Invoice generated successfully!');
+    });
 
-            // Apply tax and discount
-            const tax = parseFloat(document.getElementById("tax").value) || 0;
-            const discount = parseFloat(document.getElementById("discount").value) || 0;
-            grandTotal = grandTotal + (grandTotal * tax / 100) - discount;
+    // Download invoice as PDF
+    function downloadInvoiceAsPDF() {
+      const doc = new jsPDF();
+      const customer = customers.find(c => c.id == document.getElementById('invoiceCustomer').value);
+      const invoiceSummaryBody = document.getElementById('invoiceSummaryBody');
+      const grandTotal = document.getElementById('grandTotal').innerText;
 
-            document.getElementById("grandTotal").innerText = grandTotal.toFixed(2);
-            saveToLocalStorage();
-        }
+      // Add invoice details
+      doc.setFontSize(18);
+      doc.text('Invoice', 10, 10);
+      doc.setFontSize(12);
+      doc.text(`Customer: ${customer.name}`, 10, 20);
+      doc.text(`Email: ${customer.email}`, 10, 30);
+      doc.text(`Phone: ${customer.phone}`, 10, 40);
 
-        function saveToLocalStorage() {
-            const invoiceData = {
-                name: document.getElementById("name").value,
-                mobile: document.getElementById("mobile").value,
-                email: document.getElementById("email").value,
-                date: document.getElementById("invoiceDate").value,
-                number: document.getElementById("invoiceNumber").value,
-                rows: [],
-                tax: document.getElementById("tax").value,
-                discount: document.getElementById("discount").value,
-                grandTotal: document.getElementById("grandTotal").innerText
-            };
+      // Add invoice items
+      let y = 60;
+      doc.setFontSize(14);
+      doc.text('Item', 10, y);
+      doc.text('Quantity', 60, y);
+      doc.text('Price', 100, y);
+      doc.text('Total', 140, y);
 
-            document.querySelectorAll("#invoiceTable tbody tr").forEach(row => {
-                invoiceData.rows.push({
-                    item: row.querySelector("input[type='text']").value,
-                    qty: row.querySelector(".qty").value,
-                    price: row.querySelector(".price").value,
-                    total: row.querySelector(".total").innerText
-                });
-            });
+      doc.setFontSize(12);
+      invoiceSummaryBody.querySelectorAll('tr').forEach(row => {
+        y += 10;
+        const cells = row.querySelectorAll('td');
+        doc.text(cells[0].innerText, 10, y);
+        doc.text(cells[1].innerText, 60, y);
+        doc.text(cells[2].innerText, 100, y);
+        doc.text(cells[3].innerText, 140, y);
+      });
 
-            localStorage.setItem("invoiceData", JSON.stringify(invoiceData));
-        }
+      // Add grand total
+      y += 20;
+      doc.setFontSize(14);
+      doc.text('Grand Total:', 100, y);
+      doc.text(grandTotal, 140, y);
 
-        function loadFromLocalStorage() {
-            const invoiceData = JSON.parse(localStorage.getItem("invoiceData"));
-            if (invoiceData) {
-                document.getElementById("name").value = invoiceData.name;
-                document.getElementById("mobile").value = invoiceData.mobile;
-                document.getElementById("email").value = invoiceData.email;
-                document.getElementById("invoiceDate").value = invoiceData.date;
-                document.getElementById("invoiceNumber").value = invoiceData.number;
-                document.getElementById("tax").value = invoiceData.tax;
-                document.getElementById("discount").value = invoiceData.discount;
-                document.getElementById("grandTotal").innerText = invoiceData.grandTotal;
+      // Save the PDF
+      doc.save('invoice.pdf');
+    }
 
-                invoiceData.rows.forEach(row => {
-                    addRow();
-                    const lastRow = document.querySelector("#invoiceTable tbody tr:last-child");
-                    lastRow.querySelector("input[type='text']").value = row.item;
-                    lastRow.querySelector(".qty").value = row.qty;
-                    lastRow.querySelector(".price").value = row.price;
-                    lastRow.querySelector(".total").innerText = row.total;
-                });
-            }
-        }
-
-        function validateInputs() {
-            let isValid = true;
-
-            const name = document.getElementById("name").value;
-            const mobile = document.getElementById("mobile").value;
-            const email = document.getElementById("email").value;
-
-            // Name validation
-            if (!name) {
-                document.getElementById("nameError").style.display = "block";
-                isValid = false;
-            } else {
-                document.getElementById("nameError").style.display = "none";
-            }
-
-            // Mobile validation
-            const mobileRegex = /^\d{10}$/;
-            if (!mobileRegex.test(mobile)) {
-                document.getElementById("mobileError").style.display = "block";
-                isValid = false;
-            } else {
-                document.getElementById("mobileError").style.display = "none";
-            }
-
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                document.getElementById("emailError").style.display = "block";
-                isValid = false;
-            } else {
-                document.getElementById("emailError").style.display = "none";
-            }
-
-            return isValid;
-        }
-
-        function downloadInvoice() {
-            if (!validateInputs()) {
-                alert("Please fix the errors before downloading the invoice.");
-                return;
-            }
-
-            const doc = new jsPDF();
-            doc.setFontSize(18);
-            doc.text("Invoice", 10, 10);
-            doc.setFontSize(12);
-            doc.text(`Invoice Number: ${document.getElementById("invoiceNumber").value}`, 10, 20);
-            doc.text(`Date: ${document.getElementById("invoiceDate").value}`, 10, 30);
-            doc.text(`Name: ${document.getElementById("name").value}`, 10, 40);
-            doc.text(`Mobile: ${document.getElementById("mobile").value}`, 10, 50);
-            doc.text(`Email: ${document.getElementById("email").value}`, 10, 60);
-
-            let y = 80;
-            doc.setFontSize(14);
-            doc.text("Item", 10, y);
-            doc.text("Quantity", 60, y);
-            doc.text("Price", 100, y);
-            doc.text("Total", 140, y);
-
-            doc.setFontSize(12);
-            document.querySelectorAll("#invoiceTable tbody tr").forEach(row => {
-                y += 10;
-                doc.text(row.querySelector("input[type='text']").value, 10, y);
-                doc.text(row.querySelector(".qty").value, 60, y);
-                doc.text(row.querySelector(".price").value, 100, y);
-                doc.text(row.querySelector(".total").innerText, 140, y);
-            });
-
-            y += 20;
-            doc.setFontSize(14);
-            doc.text(`Grand Total: $${document.getElementById("grandTotal").innerText}`, 10, y);
-
-            doc.save("invoice.pdf");
-        }
-
-        function printInvoice() {
-            if (!validateInputs()) {
-                alert("Please fix the errors before printing the invoice.");
-                return;
-            }
-            window.print();
-        }
-    </script>
+    // Initialize
+    fetchCustomers();
+    fetchItems();
+  </script>
 </body>
 </html>
