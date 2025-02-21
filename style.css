@@ -1,0 +1,191 @@
+        /* Global Styles */
+        body {
+          font-family: 'Poppins', sans-serif;
+          background: #f8f9fa;
+          margin: 0;
+          padding: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          background-color: #5f6b79;
+        }
+        
+        .invoice-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: grid;
+            
+            text-align: center; /* Center text inside the container */
+        }
+
+        .invoice-header {
+            display: fle;
+            flex-direction: column;
+            align-items: center; /* Center align items horizontally */
+            margin-bottom: 30px;
+        }
+        
+        .invoice-title {
+            background-color: navy;
+          font-size: 28px;
+          font-weight: 600;
+          color: #f6f6f6;
+          margin-bottom: 30px;
+        }
+
+        .input-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 40%;
+    margin: 0 auto;
+}
+
+.input-group label {
+    margin-right: 10px;
+    width: 50px;
+}
+
+.input-group input {
+    width: 200px;
+    padding: 20pxpx;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.error-message {
+padding: 10px;
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 30px;
+        }
+
+        th, td {
+          border: 1px solid #ddd;
+          padding: 12px;
+          text-align: center; /* Center align table content */
+        }
+
+        th {
+          background: #007bff;
+          color: white;
+          font-weight: 500;
+        }
+
+        tr:hover {
+          background: #f1f1f1;
+        }
+
+        input[type="text"], input[type="number"] {
+          width: 90%;
+          padding: 8px;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          font-size: 14px;
+          text-align: center; /* Center align input text */
+          transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+          border-color: #007bff;
+          outline: none;
+        }
+
+        .total-section {
+          text-align: center; /* Center align total section */
+          margin-top: 20px;
+          font-size: 18px;
+          font-weight: 500;
+        }
+
+        .total-section input {
+          width: 100px;
+          margin-left: 10px;
+          padding: 8px;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          font-size: 14px;
+          text-align: center;
+        }
+
+        .button-group {
+          margin-top: 30px;
+          text-align: center; /* Center align buttons */
+        }
+
+        button {
+          padding: 10px 20px;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 500;
+          margin-left: 10px;
+          width: 80px;
+          transition: background 0.3s ease;
+        }
+
+        .add-btn {
+          background: #28a745;
+          color: white;
+        }
+
+        .add-btn:hover {
+          background: #218838;
+        }
+
+        .delete-btn {
+          background: #dc3545;
+          color: white;
+        }
+
+        .delete-btn:hover {
+          background: #c82333;
+        }
+
+        .download-btn {
+          background: #007bff;
+          color: white;
+        }
+
+        .download-btn:hover {
+          background: #0056b3;
+        }
+
+        .print-btn {
+          background: #17a2b8;
+          color: white;
+        }
+
+        .print-btn:hover {
+          background: #138496;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          .invoice-header {
+              align-items: center;
+          }
+
+          .button-group {
+              text-align: center;
+          }
+
+          button {
+              width: 100%;
+              margin: 10px 0;
+          }
+        }
