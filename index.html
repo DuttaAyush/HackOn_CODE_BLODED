@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Billing System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .invoice-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .invoice-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .company-details {
+            text-align: right;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .client-details input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        .total-section {
+            text-align: right;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .button-group {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+            transition: 0.3s;
+        }
+
+        .add-btn { background: #28a745; color: white; }
+        .delete-btn { background: #dc3545; color: white; }
+        .download-btn { background: #007bff; color: white; }
+        .print-btn { background: #17a2b8; color: white; }
+        .email-btn { background: #ff9800; color: white; }
+
+        @media print {
+            .button-group { display: none; }
+        }
+    </style>
+</head>
+<body onload="generateInvoiceNumber()">
+    <div class="invoice-container">
+        <div class="invoice-header">
+            <div>
+                <div class="invoice-title">Invoice</div>
+                <div>
+                    <label for="invoiceDate">Invoice Date: </label>
+                    <input type="date" id="invoiceDate">
+                    <label for="invoiceNumber">Invoice #: </label>
+                    <input type="text" id="invoiceNumber" readonly>
+                </div>
+            </div>
+            <div class="company-details">
+                <strong>XYZ Pvt Ltd</strong><br>
+                xyz@example.com<br>
+                +1 234 567 8901
+            </div>
+        </div>
+
+        <div class="client-details">
+            <input type="text" id="clientName" placeholder="Client Name">
+            <input type="email" id="clientEmail" placeholder="Client Email">
+            <input type="text" id="clientMobile" placeholder="Mobile Number">
+            <input type="text" id="clientAddress" placeholder="Address">
+        </div>
+
+        <button class="email-btn" onclick="sendEmail()">📧 Email Invoice</button>
+        
+        <table id="invoiceTable">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div class="total-section">
+            <label for="tax">Tax (%): </label>
+            <input type="number" id="tax" value="0" min="0">
+            <label for="discount">Discount ($): </label>
+            <input type="number" id="discount" value="0" min="0">
+            <div>Grand Total: $<span id="grandTotal">0</span></div>
+        </div>
+
+        <div class="button-group">
+            <button class="add-btn" onclick="addRow()">➕ Add Item</button>
+            <button class="download-btn" onclick="downloadInvoice()">⬇ Download PDF</button>
+            <button class="print-btn" onclick="printInvoice()">🖨 Print Invoice</button>
+        </div>
+    </div>
+
+    <script>
+        function generateInvoiceNumber() {
+            document.getElementById("invoiceNumber").value = "INV-" + Math.floor(Math.random() * 1000000);
+        }
+
+        function addRow() {
+            let table = document.querySelector("#invoiceTable tbody");
+            let row = document.createElement("tr");
+            row.innerHTML = `
+                <td><input type="text" placeholder="Item"></td>
+                <td><input type="number" class="qty" value="1" min="1"></td>
+                <td><input type="number" class="price" value="0"></td>
+                <td class="total">0</td>
+                <td><button class="delete-btn" onclick="this.closest('tr').remove(); updateTotal();">✖</button></td>
+            `;
+            table.appendChild(row);
+        }
+
+        async function sendEmail() {
+            let clientEmail = document.getElementById("clientEmail").value;
+            if (!clientEmail) {
+                alert("Please enter the client's email.");
+                return;
+            }
+
+            let invoiceData = {
+                email: clientEmail,
+                clientName: document.getElementById("clientName").value,
+                invoiceNumber: document.getElementById("invoiceNumber").value,
+                invoiceDate: document.getElementById("invoiceDate").value,
+                totalAmount: document.getElementById("grandTotal").innerText,
+            };
+
+            try {
+                let response = await fetch("http://127.0.0.1:5000/send-invoice", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(invoiceData),
+                });
+
+                let result = await response.json();
+                if (result.success) {
+                    alert("Invoice sent successfully!");
+                } else {
+                    alert("Failed to send email.");
+                }
+            } catch (error) {
+                console.error("Error sending email:", error);
+                alert("Error sending email.");
+            }
+        }
+    </script>
+</body>
+</html>
