@@ -1,20 +1,7 @@
 {
-  "name": "hackon",
-  "version": "1.0.0",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/DuttaAyush/HackOn.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/DuttaAyush/HackOn/issues"
-  },
-  "homepage": "https://github.com/DuttaAyush/HackOn#readme",
-  "description": ""
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.475.0",
+    "tailwindcss-animate": "^1.0.7"
+  }
 }
