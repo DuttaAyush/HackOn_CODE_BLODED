@@ -1,140 +1,70 @@
-import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Table } from "@/components/ui/table";
+let invoiceRows = [];
 
-const BillingSystem = () => {
-  const [clients, setClients] = useState([]);
-  const [invoices, setInvoices] = useState([]);
-  const [newClient, setNewClient] = useState({ name: "", email: "", subscription: "" });
+        function addRow() {
+            let table = document.getElementById("invoiceTable").getElementsByTagName('tbody')[0];
+            let rowId = invoiceRows.length;
+            invoiceRows.push({ id: rowId, item: "", qty: 1, price: 0 });
 
-  // Fetch initial data
-  useEffect(() => {
-    fetchClients();
-    fetchInvoices();
-  }, []);
+            let row = table.insertRow();
+            row.innerHTML = `
+                <td><input type="text" oninput="updateRow(${rowId}, 'item', this.value)"></td>
+                <td><input type="number" min="1" value="1" oninput="updateRow(${rowId}, 'qty', this.value)"></td>
+                <td><input type="number" value="0" oninput="updateRow(${rowId}, 'price', this.value)"></td>
+                <td class="total">$0.00</td>
+                <td><button class="delete-btn" onclick="deleteRow(${rowId})">✖</button></td>
+            `;
+        }
 
-  const fetchClients = async () => {
-    // Simulate API call
-    const response = await fetch('/api/clients');
-    const data = await response.json();
-    setClients(data);
-  };
+        function updateRow(id, field, value) {
+            let row = invoiceRows.find(row => row.id === id);
+            if (row) {
+                row[field] = field === 'qty' || field === 'price' ? parseFloat(value) : value;
+                updateTotal();
+            }
+        }
 
-  const fetchInvoices = async () => {
-    // Simulate API call
-    const response = await fetch('/api/invoices');
-    const data = await response.json();
-    setInvoices(data);
-  };
+        function deleteRow(id) {
+            invoiceRows = invoiceRows.filter(row => row.id !== id);
+            let table = document.getElementById("invoiceTable").getElementsByTagName('tbody')[0];
+            table.innerHTML = "";
+            invoiceRows.forEach(row => addRow(row));
+            updateTotal();
+        }
 
-  const handleAddClient = async () => {
-    // Simulate API call
-    await fetch('/api/clients', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newClient),
-    });
-    setNewClient({ name: "", email: "", subscription: "" });
-    fetchClients();
-  };
+        function updateTotal() {
+            let total = 0;
+            invoiceRows.forEach((row, index) => {
+                let rowTotal = row.qty * row.price;
+                total += rowTotal;
+                document.querySelectorAll('.total')[index].innerText = `$${rowTotal.toFixed(2)}`;
+            });
 
-  const generateInvoice = async (clientId) => {
-    await fetch(/api/invoices, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ clientId }),
-    });
-    fetchInvoices();
-  };
+            document.getElementById("grandTotal").innerText = total.toFixed(2);
+        }
 
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Automated Billing & Invoicing System</h1>
+        function printInvoice() {
+            window.print();
+        }
 
-      {/* Add New Client */}
-      <Card className="mb-6">
-        <CardContent>
-          <h2 className="text-2xl mb-4">Add New Client</h2>
-          <div className="flex gap-4">
-            <Input
-              placeholder="Client Name"
-              value={newClient.name}
-              onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
-            />
-            <Input
-              placeholder="Client Email"
-              value={newClient.email}
-              onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
-            />
-            <Input
-              placeholder="Subscription Type"
-              value={newClient.subscription}
-              onChange={(e) => setNewClient({ ...newClient, subscription: e.target.value })}
-            />
-            <Button onClick={handleAddClient}>Add Client</Button>
-          </div>
-        </CardContent>
-      </Card>
+        function downloadInvoice() {
+            const { jsPDF } = window.jspdf;
+            let doc = new jsPDF();
+            doc.text("Invoice", 20, 20);
+            doc.save("invoice.pdf");
+        }
 
-      {/* Clients List */}
-      <Card className="mb-6">
-        <CardContent>
-          <h2 className="text-2xl mb-4">Clients</h2>
-          <Table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Subscription</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clients.map((client) => (
-                <tr key={client.id}>
-                  <td>{client.name}</td>
-                  <td>{client.email}</td>
-                  <td>{client.subscription}</td>
-                  <td>
-                    <Button onClick={() => generateInvoice(client.id)}>Generate Invoice</Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </CardContent>
-      </Card>
+        function emailInvoice() {
+            let email = document.getElementById("email").value;
+            if (!email) {
+                alert("Please enter an email address.");
+                return;
+            }
 
-      {/* Invoices List */}
-      <Card>
-        <CardContent>
-          <h2 className="text-2xl mb-4">Invoices</h2>
-          <Table>
-            <thead>
-              <tr>
-                <th>Invoice ID</th>
-                <th>Client Name</th>
-                <th>Amount</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoices.map((invoice) => (
-                <tr key={invoice.id}>
-                  <td>{invoice.id}</td>
-                  <td>{invoice.clientName}</td>
-                  <td>${invoice.amount}</td>
-                  <td>{invoice.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
+            let invoiceDetails = "Invoice Details:\n";
+            invoiceRows.forEach(row => {
+                invoiceDetails += `Item: ${row.item}, Quantity: ${row.qty}, Price: $${row.price}, Total: $${(row.qty * row.price).toFixed(2)}\n`;
+            });
 
-export default BillingSystem;
+            let mailtoLink = `mailto:${email}?subject=Invoice&body=${encodeURIComponent(invoiceDetails)}`;
+            window.location.href = mailtoLink;
+        }
