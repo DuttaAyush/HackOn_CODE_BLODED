@@ -17,7 +17,6 @@
     .navbar {
       background-color: #0d6efd;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      text-align: center;
     }
     .navbar-brand, .nav-link {
       color: white !important;
@@ -73,20 +72,13 @@
     .invoice-item-row {
       margin-bottom: 15px;
     }
-    #invoiceSummary {
+    .reminder {
       margin-top: 20px;
-    }
-    #invoiceSummary table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    #invoiceSummary th, #invoiceSummary td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-    #invoiceSummary th {
-      background-color: #f8f9fa;
+      padding: 15px;
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 5px;
+      color: #856404;
     }
   </style>
 </head>
@@ -94,7 +86,7 @@
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Billing System</a>
+      <a class="navbar-brand" href="#" ;">Billing System</a>
     </div>
   </nav>
 
@@ -157,35 +149,21 @@
             <div id="invoiceCustomerError" class="error-message"></div>
           </div>
           <div class="mb-3">
+            <label for="invoiceDueDate" class="form-label">Due Date</label>
+            <input type="date" class="form-control" id="invoiceDueDate" required>
+            <div id="invoiceDueDateError" class="error-message"></div>
+          </div>
+          <div class="mb-3">
             <label for="invoiceItems" class="form-label">Items</label>
             <div id="invoiceItems">
               <!-- Dynamically add items here -->
             </div>
             <button type="button" class="btn btn-secondary mt-2" onclick="addItemRow()">Add Item</button>
           </div>
-          <div id="invoiceSummary">
-            <h4>Invoice Summary</h4>
-            <table>
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>Quantity</th>
-                  <th>Price</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody id="invoiceSummaryBody">
-                <!-- Invoice items will be added here -->
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th colspan="3">Grand Total</th>
-                  <th id="grandTotal">$0.00</th>
-                </tr>
-              </tfoot>
-            </table>
+          <div id="reminder" class="reminder" style="display: none;">
+            <strong>Reminder:</strong> This bill is overdue. Please pay immediately.
           </div>
-          <button type="submit" class="btn btn-primary mt-3">Generate Invoice</button>
+          <button type="submit" class="btn btn-primary mt-3" onclick="mailsent()">Generate Invoice</button>
           <button type="button" class="btn btn-success mt-3" onclick="downloadInvoiceAsPDF()">Download PDF</button>
         </form>
       </div>
@@ -208,13 +186,13 @@
       const itemRow = `
         <div class="invoice-item-row row mb-3">
           <div class="col">
-            <select class="form-select item-select" required onchange="updateInvoiceSummary()">
+            <select class="form-select item-select" required>
               <option value="">Select Item</option>
               ${items.map(item => `<option value="${item.id}">${item.name} - $${item.price}</option>`).join('')}
             </select>
           </div>
           <div class="col">
-            <input type="number" class="form-control item-quantity" placeholder="Quantity" required oninput="updateInvoiceSummary()">
+            <input type="number" class="form-control item-quantity" placeholder="Quantity" required>
           </div>
         </div>
       `;
@@ -240,35 +218,6 @@
           select.innerHTML += `<option value="${item.id}">${item.name} - $${item.price}</option>`;
         });
       });
-    }
-
-    // Update invoice summary
-    function updateInvoiceSummary() {
-      const invoiceSummaryBody = document.getElementById('invoiceSummaryBody');
-      invoiceSummaryBody.innerHTML = '';
-      let grandTotal = 0;
-
-      document.querySelectorAll('.invoice-item-row').forEach(row => {
-        const itemId = row.querySelector('.item-select').value;
-        const quantity = row.querySelector('.item-quantity').value;
-
-        if (itemId && quantity) {
-          const item = items.find(i => i.id == itemId);
-          const total = item.price * quantity;
-          grandTotal += total;
-
-          invoiceSummaryBody.innerHTML += `
-            <tr>
-              <td>${item.name}</td>
-              <td>${quantity}</td>
-              <td>$${item.price.toFixed(2)}</td>
-              <td>$${total.toFixed(2)}</td>
-            </tr>
-          `;
-        }
-      });
-
-      document.getElementById('grandTotal').innerText = `$${grandTotal.toFixed(2)}`;
     }
 
     // Handle customer form submission
@@ -312,6 +261,7 @@
     document.getElementById('invoiceForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const customerId = document.getElementById('invoiceCustomer').value;
+      const dueDate = document.getElementById('invoiceDueDate').value;
       const selectedItems = [];
       document.querySelectorAll('.invoice-item-row').forEach(row => {
         const itemId = row.querySelector('.item-select').value;
@@ -321,9 +271,18 @@
         }
       });
 
-      if (!customerId || selectedItems.length === 0) {
-        alert('Please select a customer and at least one item.');
+      if (!customerId || selectedItems.length === 0 || !dueDate) {
+        alert('Please select a customer, due date, and at least one item.');
         return;
+      }
+
+      // Check if the bill is overdue
+      const today = new Date();
+      const dueDateObj = new Date(dueDate);
+      if (today > dueDateObj) {
+        document.getElementById('reminder').style.display = 'block';
+      } else {
+        document.getElementById('reminder').style.display = 'none';
       }
 
       // Generate invoice (mock implementation)
@@ -334,19 +293,33 @@
     function downloadInvoiceAsPDF() {
       const doc = new jsPDF();
       const customer = customers.find(c => c.id == document.getElementById('invoiceCustomer').value);
-      const invoiceSummaryBody = document.getElementById('invoiceSummaryBody');
-      const grandTotal = document.getElementById('grandTotal').innerText;
+      const dueDate = document.getElementById('invoiceDueDate').value;
+      const selectedItems = [];
+      document.querySelectorAll('.invoice-item-row').forEach(row => {
+        const itemId = row.querySelector('.item-select').value;
+        const quantity = row.querySelector('.item-quantity').value;
+        if (itemId && quantity) {
+          const item = items.find(i => i.id == itemId);
+          selectedItems.push({ item, quantity });
+        }
+      });
 
-      // Add invoice details
+      if (!customer || selectedItems.length === 0 || !dueDate) {
+        alert('Please generate an invoice first.');
+        return;
+      }
+
+      // Add invoice details to PDF
       doc.setFontSize(18);
       doc.text('Invoice', 10, 10);
       doc.setFontSize(12);
       doc.text(`Customer: ${customer.name}`, 10, 20);
       doc.text(`Email: ${customer.email}`, 10, 30);
       doc.text(`Phone: ${customer.phone}`, 10, 40);
+      doc.text(`Due Date: ${dueDate}`, 10, 50);
 
-      // Add invoice items
-      let y = 60;
+      // Add items to PDF
+      let y = 70;
       doc.setFontSize(14);
       doc.text('Item', 10, y);
       doc.text('Quantity', 60, y);
@@ -354,23 +327,31 @@
       doc.text('Total', 140, y);
 
       doc.setFontSize(12);
-      invoiceSummaryBody.querySelectorAll('tr').forEach(row => {
+      let grandTotal = 0;
+      selectedItems.forEach(({ item, quantity }) => {
         y += 10;
-        const cells = row.querySelectorAll('td');
-        doc.text(cells[0].innerText, 10, y);
-        doc.text(cells[1].innerText, 60, y);
-        doc.text(cells[2].innerText, 100, y);
-        doc.text(cells[3].innerText, 140, y);
+        const total = item.price * quantity;
+        grandTotal += total;
+        doc.text(item.name, 10, y);
+        doc.text(quantity.toString(), 60, y);
+        doc.text(`$${item.price.toFixed(2)}`, 100, y);
+        doc.text(`$${total.toFixed(2)}`, 140, y);
       });
 
       // Add grand total
       y += 20;
       doc.setFontSize(14);
       doc.text('Grand Total:', 100, y);
-      doc.text(grandTotal, 140, y);
+      doc.text(`$${grandTotal.toFixed(2)}`, 140, y);
 
       // Save the PDF
       doc.save('invoice.pdf');
+    }
+    function mailsent(){
+        var mail = document.getElementById("customerEmail").value;
+        alert('Invoice sent successfully at'+mail+'!');
+        downloadInvoiceAsPDF()
+
     }
 
     // Initialize
